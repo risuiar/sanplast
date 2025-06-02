@@ -1,0 +1,24 @@
+<svg width="400" height="500" viewBox="0 0 400 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Cuerpo principal del tanque -->
+    <path d="M50 80 L50 420 Q200 450 350 420 L350 80 Q200 50 50 80Z" fill="#2a5e99"/>
+
+    <!-- Anillos horizontales -->
+    <path d="M50 160 Q200 190 350 160" stroke="#1c4b7a" stroke-width="4" fill="none"/>
+    <path d="M50 240 Q200 270 350 240" stroke="#1c4b7a" stroke-width="4" fill="none"/>
+    <path d="M50 320 Q200 350 350 320" stroke="#1c4b7a" stroke-width="4" fill="none"/>
+
+    <!-- Tapa superior -->
+    <path d="M50 80 Q200 50 350 80 L370 90 Q200 120 30 90 Z" fill="#1c4b7a"/>
+    <path d="M30 90 Q200 120 370 90 L350 80 Q200 50 50 80 Z" fill="#133a61"/>
+
+    <!-- Borde superior de la tapa -->
+    <path d="M50 65 Q200 35 350 65 L370 75 Q200 105 30 75 Z" fill="#1c4b7a"/>
+
+    <!-- Sombras y brillos -->
+    <path d="M70 100 Q200 130 330 100" stroke="white" stroke-width="2" fill="none" opacity="0.2"/>
+    <path d="M70 180 Q200 210 330 180" stroke="white" stroke-width="2" fill="none" opacity="0.1"/>
+    <path d="M70 260 Q200 290 330 260" stroke="white" stroke-width="2" fill="none" opacity="0.1"/>
+
+    <!-- Sombra inferior -->
+    <path d="M50 420 Q200 450 350 420 L350 430 Q200 460 50 430 Z" fill="#133a61"/>
+</svg>

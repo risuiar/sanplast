@@ -1,0 +1,83 @@
+---
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="Sanplast - Tanques de agua de alta calidad" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+		<style is:global>
+			@tailwind base;
+			@tailwind components;
+			@tailwind utilities;
+		</style>
+	</head>
+	<body class="min-h-screen bg-white">
+		<header class="bg-white shadow-sm">
+			<nav class="container mx-auto px-4 py-4">
+				<div class="flex items-center justify-between">
+					<a href="/" class="flex items-center space-x-2">
+						<img src="/logo.svg" alt="Sanplast Logo" class="h-10" />
+						<span class="text-2xl font-bold text-primary">Sanplast</span>
+					</a>
+					<div class="hidden md:flex space-x-8">
+						<a href="/" class="text-gray-600 hover:text-primary">Inicio</a>
+						<a href="/productos" class="text-gray-600 hover:text-primary">Productos</a>
+						<a href="/nosotros" class="text-gray-600 hover:text-primary">Nosotros</a>
+						<a href="/contacto" class="text-gray-600 hover:text-primary">Contacto</a>
+					</div>
+				</div>
+			</nav>
+		</header>
+
+		<slot />
+
+		<footer class="bg-primary text-white mt-16">
+			<div class="container mx-auto px-4 py-12">
+				<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+					<div>
+						<h3 class="text-xl font-semibold mb-4">Información</h3>
+						<ul class="space-y-2">
+							<li><a href="/productos" class="hover:text-primary/80">Productos</a></li>
+							<li><a href="/nosotros" class="hover:text-primary/80">Nosotros</a></li>
+							<li><a href="/testimonios" class="hover:text-primary/80">Testimonios</a></li>
+						</ul>
+					</div>
+					<div>
+						<h3 class="text-xl font-semibold mb-4">Contacto</h3>
+						<ul class="space-y-2">
+							<li>
+								<a href="mailto:info@sanplast.com.ar" class="hover:text-primary/80">
+									info@sanplast.com.ar
+								</a>
+							</li>
+							<li>
+								<a href="tel:+541112345678" class="hover:text-primary/80">
+									+54 11 1234-5678
+								</a>
+							</li>
+						</ul>
+					</div>
+					<div>
+						<h3 class="text-xl font-semibold mb-4">Testimonios</h3>
+						<p class="text-white/90">
+							Lo que nuestros clientes dicen sobre nuestros productos.
+						</p>
+					</div>
+				</div>
+				<div class="mt-8 pt-8 border-t border-primary/20 text-center text-sm text-white/70">
+					<p>&copy; {new Date().getFullYear()} Sanplast. Todos los derechos reservados.</p>
+				</div>
+			</div>
+		</footer>
+	</body>
+</html>

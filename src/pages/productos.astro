@@ -1,0 +1,59 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Productos - Sanplast">
+	<main class="container mx-auto px-4 py-8">
+		<h1 class="text-3xl font-bold text-primary mb-8">Nuestros Productos</h1>
+
+		<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+			<div class="bg-white rounded-lg shadow-md overflow-hidden">
+				<a href="/productos/tanques" class="block">
+					<div class="aspect-w-2 aspect-h-2">
+						<img
+							src="/images/categories/tanque.webp"
+							alt="Tanques"
+							class="w-full h-full object-cover"
+						/>
+					</div>
+					<div class="p-4">
+						<h2 class="text-xl font-semibold text-primary mb-2">Tanques de Agua</h2>
+						<p class="text-gray-600">Explora nuestra línea de tanques de agua de alta calidad.</p>
+					</div>
+				</a>
+			</div>
+
+			<div class="bg-white rounded-lg shadow-md overflow-hidden">
+				<a href="/productos/canos" class="block">
+					<div class="aspect-w-2 aspect-h-2">
+						<img
+							src="/images/categories/cano.webp"
+							alt="Caños"
+							class="w-full h-full object-cover"
+						/>
+					</div>
+					<div class="p-4">
+						<h2 class="text-xl font-semibold text-primary mb-2">Caños y Tuberías</h2>
+						<p class="text-gray-600">Descubre nuestra selección de caños y tuberías.</p>
+					</div>
+				</a>
+			</div>
+
+			<div class="bg-white rounded-lg shadow-md overflow-hidden">
+				<a href="/productos/accesorios" class="block">
+					<div class="aspect-w-2 aspect-h-2">
+						<img
+							src="/images/categories/accesorio.webp"
+							alt="Accesorios"
+							class="w-full h-full object-cover"
+						/>
+					</div>
+					<div class="p-4">
+						<h2 class="text-xl font-semibold text-primary mb-2">Accesorios</h2>
+						<p class="text-gray-600">Encuentra todos los accesorios que necesitas.</p>
+					</div>
+				</a>
+			</div>
+		</div>
+	</main>
+</Layout>
