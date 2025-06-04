@@ -29,11 +29,30 @@ const { title } = Astro.props;
 						<img src="/logo.svg" alt="Sanplast Logo" class="h-10" />
 						<span class="text-2xl font-bold text-primary">Sanplast</span>
 					</a>
+
+					<!-- Menú para escritorio -->
 					<div class="hidden md:flex space-x-8">
 						<a href="/" class="text-gray-600 hover:text-primary">Inicio</a>
 						<a href="/productos" class="text-gray-600 hover:text-primary">Productos</a>
 						<a href="/nosotros" class="text-gray-600 hover:text-primary">Nosotros</a>
 						<a href="/contacto" class="text-gray-600 hover:text-primary">Contacto</a>
+					</div>
+
+					<!-- Botón de menú hamburguesa para móvil -->
+					<button id="mobile-menu-button" class="md:hidden flex items-center">
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+						</svg>
+					</button>
+				</div>
+
+				<!-- Menú móvil (oculto por defecto) -->
+				<div id="mobile-menu" class="md:hidden hidden pt-4 pb-2">
+					<div class="flex flex-col space-y-3">
+						<a href="/" class="text-gray-600 hover:text-primary py-2">Inicio</a>
+						<a href="/productos" class="text-gray-600 hover:text-primary py-2">Productos</a>
+						<a href="/nosotros" class="text-gray-600 hover:text-primary py-2">Nosotros</a>
+						<a href="/contacto" class="text-gray-600 hover:text-primary py-2">Contacto</a>
 					</div>
 				</div>
 			</nav>
@@ -79,5 +98,32 @@ const { title } = Astro.props;
 				</div>
 			</div>
 		</footer>
+		<script>
+			// Menú hamburguesa
+			document.addEventListener('astro:page-load', () => {
+				const mobileMenuButton = document.getElementById('mobile-menu-button');
+				const mobileMenu = document.getElementById('mobile-menu');
+
+				if (mobileMenuButton && mobileMenu) {
+					mobileMenuButton.addEventListener('click', () => {
+						// Toggle del menú móvil
+						mobileMenu.classList.toggle('hidden');
+					});
+				}
+			});
+
+			// También inicializar en la carga inicial
+			document.addEventListener('DOMContentLoaded', () => {
+				const mobileMenuButton = document.getElementById('mobile-menu-button');
+				const mobileMenu = document.getElementById('mobile-menu');
+
+				if (mobileMenuButton && mobileMenu) {
+					mobileMenuButton.addEventListener('click', () => {
+						// Toggle del menú móvil
+						mobileMenu.classList.toggle('hidden');
+					});
+				}
+			});
+		</script>
 	</body>
 </html>

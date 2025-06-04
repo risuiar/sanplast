@@ -39,14 +39,41 @@ const images = [
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8" transition:name={`product-${product.id}`}>
       <!-- Card de imagen -->
       <div class="bg-white rounded-lg shadow-md overflow-hidden">
-        <div class="aspect-square relative">
+        <!-- Imagen principal con mejor aspecto -->
+        <div class="aspect-square relative bg-gray-50 p-4">
           <img
-            src={`${baseImageUrl}${product.image1}`}
+            id="main-image"
+            src={`${baseImageUrl}${images[0]}`}
             alt={product.modelo}
-            class="absolute inset-0 w-full h-full object-contain p-4"
+            class="absolute inset-0 w-full h-full object-contain transition-opacity duration-300"
             transition:name={`product-image-${product.id}`}
           />
         </div>
+
+        <!-- Galería de miniaturas con espaciado responsivo -->
+        {images.length > 1 && (
+          <div class="p-4 md:p-6 bg-gray-50 border-t border-gray-100">
+            <div class="flex flex-wrap justify-center gap-2 md:gap-3">
+              {images.map((image, index) => (
+                <button
+                  class={`thumbnail rounded-md overflow-hidden transition-all duration-200 hover:opacity-90 ${
+                    index === 0 ? 'ring-2 ring-primary ring-offset-2' : 'ring-1 ring-gray-200'
+                  }`}
+                  data-image={`${baseImageUrl}${image}`}
+                >
+                  <div class="w-12 h-12 md:w-14 md:h-14 bg-white">
+                    <img
+                      src={`${baseImageUrl}${image}`}
+                      alt={`${product.modelo} - vista ${index + 1}`}
+                      class="w-full h-full object-contain p-1"
+                      loading="lazy"
+                    />
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       <!-- Card de información -->
@@ -115,19 +142,27 @@ function initializeGallery() {
 
   thumbnails.forEach((thumb) => {
     thumb.addEventListener('click', () => {
-      // Update main image
-      const newImageSrc = thumb.getAttribute('data-image');
-      if (newImageSrc && mainImage) {
-        mainImage.src = newImageSrc;
+      // Añadir efecto de fade al cambiar la imagen
+      if (mainImage) {
+        mainImage.style.opacity = '0';
+
+        setTimeout(() => {
+          // Update main image
+          const newImageSrc = thumb.getAttribute('data-image');
+          if (newImageSrc && mainImage) {
+            mainImage.src = newImageSrc;
+            mainImage.style.opacity = '1';
+          }
+        }, 200);
       }
 
       // Update active thumbnail
       thumbnails.forEach((t) => {
-        t.classList.remove('border-primary');
-        t.classList.add('border-gray-200');
+        t.classList.remove('ring-primary', 'ring-2', 'ring-offset-2');
+        t.classList.add('ring-1', 'ring-gray-200');
       });
-      thumb.classList.remove('border-gray-200');
-      thumb.classList.add('border-primary');
+      thumb.classList.remove('ring-1', 'ring-gray-200');
+      thumb.classList.add('ring-2', 'ring-primary', 'ring-offset-2');
     });
   });
 }
