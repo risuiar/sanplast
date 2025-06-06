@@ -73,10 +73,10 @@ async function loadProducts() {
 
 	try {
 		// Obtener la categoría de la URL
-		const categoria = window.location.pathname.split('/').pop() as CategoryType;
-		const type = categoryTypes[categoria];
+		const categoriaArray = window.location.pathname.split('/');
+		const type = categoryTypes[categoriaArray[categoriaArray.length - 2] as CategoryType];
 
-		const response = await fetch(`https://backend-sanplast.mateando.com/api/productos?type=${type}`, {
+		const response = await fetch(`https://backend-sanplast.mateando.com/api/productos?tipo=${type}`, {
 			headers: {
 				'X-API-KEY': 'dgfS34D2xD335?$S-'
 			}
