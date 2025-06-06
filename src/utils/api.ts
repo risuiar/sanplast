@@ -1,4 +1,9 @@
-interface Product {
+import { categoryTypes } from "../pages/productos/CategoryTypes.astro";
+
+const API_URL = "https://backend-sanplast.mateando.com/api";
+const API_KEY = "dgfS34D2xD335?$S-";
+
+export interface Product {
   id: string;
   modelo: string;
   image1: string;
@@ -16,12 +21,37 @@ interface Product {
   uso_recomendado?: string;
 }
 
-const API_URL = "https://backend-sanplast.mateando.com/api";
-const API_KEY = "dgfS34D2xD335?$S-";
-
-export async function getProducts(): Promise<Product[]> {
+export async function getRoutes(): Promise<Product[]> {
   try {
-    const response = await fetch(`${API_URL}/productos`, {
+    const url = `${API_URL}/routes`;
+
+    const response = await fetch(url, {
+      headers: {
+        "X-API-KEY": API_KEY,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const routes = await response.json();
+    return routes;
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    return [];
+  }
+}
+
+export async function getProducts(category?: string): Promise<Product[]> {
+  try {
+    const url = category
+      ? `${API_URL}/productos?tipo=${
+          categoryTypes[category as keyof typeof categoryTypes]
+        }`
+      : `${API_URL}/productos`;
+
+    const response = await fetch(url, {
       headers: {
         "X-API-KEY": API_KEY,
       },
@@ -62,5 +92,3 @@ export async function getProduct(id: string): Promise<Product | null> {
     return null;
   }
 }
-
-export type { Product };

@@ -1,6 +1,5 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import ProductCard from '../../components/ProductCard.astro';
 import LoadingSpinner from '../../components/LoadingSpinner.astro';
 import { ViewTransitions } from 'astro:transitions';
 
@@ -20,12 +19,6 @@ const categoryTitles = {
   tanques: "Tanques de Agua",
   canos: "Caños y Tuberías",
   accesorios: "Accesorios"
-};
-
-const categoryTypes = {
-  tanques: "tanque",
-  canos: "cano",
-  accesorios: "accesorio"
 };
 
 const title = categoryTitles[categoria as keyof typeof categoryTitles] || "Productos";

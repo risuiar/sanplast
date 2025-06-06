@@ -1,0 +1,72 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { ViewTransitions } from 'astro:transitions';
+import { getProducts } from '../../../utils/api';
+import { categoryTypes } from '../CategoryTypes.astro';
+
+export function getStaticPaths() {
+  return [
+    { params: { category: 'tanques' }, props: { title: 'Tanques de Agua', category: 'tanques' } },
+    { params: { category: 'canos' }, props: { title: 'Caños y Tuberías', category: 'canos' } },
+    { params: { category: 'accesorios' }, props: { title: 'Accesorios', category: 'accesorios' } },
+  ];
+}
+
+const { category, title } = Astro.props;
+
+if (!category) {
+  throw new Error('Category is required');
+}
+
+if (!['tanques', 'canos', 'accesorios'].includes(category)) {
+  throw new Error('Invalid category');
+}
+
+// Fetch products for this category
+const products = await getProducts(category);
+
+if (!products || products.length === 0) {
+  throw new Error('No products found for this category');
+}
+
+const baseImageUrl = "https://backend-sanplast.mateando.com/images/productos/";
+---
+
+<Layout title={`${title} - ${category} - Sanplast`}>
+  <ViewTransitions />
+  <main class="container mx-auto px-4 py-8">
+    <div class="mb-8">
+      <a href="/productos/" class="text-primary hover:underline">← Volver a productos</a>
+    </div>
+
+    <h1 class="text-3xl font-bold text-primary mb-8">{title}</h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      {products.map((product) => (
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+          <a href={`/productos/${categoryTypes[category as keyof typeof categoryTypes]}/${product.id}/`} class="block">
+            <div class="aspect-square relative">
+              <img
+                src={`https://backend-sanplast.mateando.com/images/productos/${product.image1}`}
+                alt={product.modelo}
+                class="w-full h-full object-contain p-4"
+              />
+            </div>
+            <div class="p-4">
+              <h3 class="text-lg font-semibold mb-1">{product.modelo}</h3>
+              {product.capacidad_litros && (
+                <p class="text-gray-600 text-sm">{product.capacidad_litros} litros</p>
+              )}
+            </div>
+          </a>
+        </div>
+      ))}
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .aspect-square {
+    padding-top: 100%;
+  }
+</style>

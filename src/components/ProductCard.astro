@@ -1,11 +1,13 @@
 ---
 import type { Product } from '../utils/api';
+import { categoryTypes } from '../pages/productos/CategoryTypes.astro';
 
 interface Props {
   product: Product;
+  category: string;
 }
 
-const { product } = Astro.props;
+const { product, category } = Astro.props;
 
 function formatPrice(price: number | undefined) {
   if (price && parseFloat(String(price)) > 0) {
@@ -19,7 +21,7 @@ function formatPrice(price: number | undefined) {
 ---
 
 <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-  <a href={`/productos/${product.id}/`} class="block">
+  <a href={`/productos/${categoryTypes[category as keyof typeof categoryTypes]}/${product.id}/`} class="block">
     <div class="aspect-square relative">
       <img
         src={`https://backend-sanplast.mateando.com/images/productos/${product.image1}`}
