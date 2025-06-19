@@ -23,7 +23,7 @@ export interface Product {
 
 export async function getRoutes(): Promise<Product[]> {
   try {
-    const url = `${API_URL}/routes`;
+    const url = `${API_URL}/routes/`;
 
     const response = await fetch(url, {
       headers: {
@@ -46,10 +46,8 @@ export async function getRoutes(): Promise<Product[]> {
 export async function getProducts(category?: string): Promise<Product[]> {
   try {
     const url = category
-      ? `${API_URL}/productos?tipo=${
-          categoryTypes[category as keyof typeof categoryTypes]
-        }`
-      : `${API_URL}/productos`;
+      ? `${API_URL}/productos/?tipo=${categoryTypes[category as keyof typeof categoryTypes]}`
+      : `${API_URL}/productos/`;
 
     const response = await fetch(url, {
       headers: {
@@ -72,7 +70,7 @@ export async function getProducts(category?: string): Promise<Product[]> {
 export async function getProduct(id: string): Promise<Product | null> {
   if (!id) return null;
   try {
-    const response = await fetch(`${API_URL}/productos/${id}`, {
+    const response = await fetch(`${API_URL}/productos/${id}/`, {
       headers: {
         "X-API-KEY": API_KEY,
       },

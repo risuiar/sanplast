@@ -49,12 +49,13 @@ const images = [
       <!-- Card de imagen -->
       <div class="bg-white rounded-lg shadow-md overflow-hidden">
         <!-- Imagen principal con mejor aspecto -->
-        <div class="aspect-square relative bg-gray-50 p-4">
+        <div class="aspect-square relative bg-gray-50 p-2">
           <img
             id="main-image"
             src={`${baseImageUrl}${images[0]}`}
             alt={product.modelo}
             class="absolute inset-0 w-full h-full object-contain transition-opacity duration-300"
+            loading="eager"
             transition:name={`product-image-${product.id}`}
           />
         </div>
@@ -70,7 +71,7 @@ const images = [
                   }`}
                   data-image={`${baseImageUrl}${image}`}
                 >
-                  <div class="w-12 h-12 md:w-14 md:h-14 bg-white">
+                  <div class="w-8 h-8 md:w-10 md:h-10 bg-white">
                     <img
                       src={`${baseImageUrl}${image}`}
                       alt={`${product.modelo} - vista ${index + 1}`}
