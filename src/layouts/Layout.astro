@@ -15,6 +15,21 @@ const { title } = Astro.props;
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
+
+		<!-- Open Graph / Facebook -->
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content="https://sanplast.mateando.com/" />
+		<meta property="og:title" content="Sanplast - Soluciones de almacenamiento de agua de alta calidad" />
+		<meta property="og:description" content="Fabricamos tanques de agua duraderos y confiables para todas sus necesidades." />
+		<meta property="og:image" content="https://sanplast.mateando.com/images/hero-tank.svg" />
+
+		<!-- Twitter -->
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:url" content="https://sanplast.mateando.com/" />
+		<meta name="twitter:title" content="Sanplast - Soluciones de almacenamiento de agua de alta calidad" />
+		<meta name="twitter:description" content="Fabricamos tanques de agua duraderos y confiables para todas sus necesidades." />
+		<meta name="twitter:image" content="https://sanplast.mateando.com/images/hero-tank.svg" />
+
 		<style is:global>
 			@tailwind base;
 			@tailwind components;
