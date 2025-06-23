@@ -21,7 +21,7 @@ function formatPrice(price: number | undefined) {
 ---
 
 <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 hover:shadow-2xl hover:border-primary transition-all duration-200 group">
-  <a href={`/productos/${categoryTypes[category as keyof typeof categoryTypes]}/${product.documentId}/`} class="block">
+  <a href={`/productos/${category}/${product.documentId}/`} class="block">
     <div class="aspect-square bg-gray-50 flex items-center justify-center relative p-0">
       <img
         src={product.image1}
