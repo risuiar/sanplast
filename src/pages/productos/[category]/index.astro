@@ -3,6 +3,7 @@ import Layout from '../../../layouts/Layout.astro';
 import { ViewTransitions } from 'astro:transitions';
 import { getProducts } from '../../../utils/api';
 import { categoryTypes } from '../CategoryTypes.astro';
+import ProductCard from '../../../components/ProductCard.astro';
 
 export function getStaticPaths() {
   return [
@@ -42,23 +43,7 @@ const baseImageUrl = "https://cms.mateando.com/images/productos/";
     {products && products.length > 0 ? (
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         {products.map((product) => (
-          <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-            <a href={`/productos/${(Object.keys(categoryTypes) as Array<keyof typeof categoryTypes>).find(key => categoryTypes[key] === product.tipo)}/${product.documentId}/`} class="block">
-              <div class="relative">
-                <img
-                  src={product.image1}
-                  alt={product.modelo}
-                  class="w-full h-full object-contain p-2"
-                />
-              </div>
-              <div class="p-3">
-                <h3 class="text-base font-semibold mb-1">{product.modelo}</h3>
-                {product.capacidad_litros && (
-                  <p class="text-gray-600 text-xs">{product.capacidad_litros} litros</p>
-                )}
-              </div>
-            </a>
-          </div>
+          <ProductCard product={product} category={category} />
         ))}
       </div>
     ) : (

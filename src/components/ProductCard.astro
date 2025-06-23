@@ -20,19 +20,20 @@ function formatPrice(price: number | undefined) {
 }
 ---
 
-<div class="bg-white rounded-lg shadow-lg overflow-hidden">
+<div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 hover:shadow-2xl hover:border-primary transition-all duration-200 group">
   <a href={`/productos/${categoryTypes[category as keyof typeof categoryTypes]}/${product.documentId}/`} class="block">
-    <div class="aspect-square relative">
+    <div class="aspect-square bg-gray-50 flex items-center justify-center relative p-0">
       <img
-        src={`https://cms.mateando.com/images/productos/${product.image1}`}
+        src={product.image1}
         alt={product.modelo}
-        class="w-full h-full object-contain p-4"
+        class="w-full h-full max-w-[90%] max-h-[90%] object-contain transition-transform duration-200 group-hover:scale-105 drop-shadow-sm m-0"
+        loading="lazy"
       />
     </div>
-    <div class="p-4">
-      <h3 class="text-lg font-semibold mb-1">{product.modelo}</h3>
+    <div class="px-1 pb-1 pt-0.5">
+      <h3 class="text-base font-semibold mb-0.5 text-gray-800 group-hover:text-primary transition-colors">{product.modelo}</h3>
       {product.capacidad_litros && (
-        <p class="text-gray-600 text-sm">{product.capacidad_litros} litros</p>
+        <p class="text-gray-600 text-xs">{product.capacidad_litros} litros</p>
       )}
     </div>
   </a>
