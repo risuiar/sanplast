@@ -14,17 +14,27 @@ export const prerender = true;
 
 export async function getStaticPaths() {
   const routes = await getRoutes();
-  return routes.map((route) => ({
-    params: { category: route.tipo, id: route.id },
-  }));
+
+  return routes
+    .map((route) => {
+      const categorySlug = (Object.keys(categoryTypes) as Array<keyof typeof categoryTypes>).find(
+        key => categoryTypes[key].toLowerCase().trim() === String(route.tipo).toLowerCase().trim()
+      );
+      if (!categorySlug) {
+        console.warn('No categorySlug found for tipo:', route.tipo, 'in product:', route);
+        return null; // skip this route
+      }
+      return { params: { category: categorySlug, id: route.documentId } };
+    })
+    .filter(Boolean); // remove nulls
 }
 const product = await getProduct(id.toString());
 
 if (!product) {
+  console.error(`Product with ID ${id} not found. This might be due to a mismatch between static paths and current API data.`);
   throw new Error(`Product with ID ${id} not found`);
 }
 
-const baseImageUrl = "https://backend-sanplast.mateando.com/images/productos/";
 const whatsappNumber = "5493764688886";
 const whatsappMessage = `Hola, estoy interesado en el producto ${product.modelo}`;
 const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
@@ -37,7 +47,6 @@ const images = [
   product.image5,
 ].filter(Boolean);
 ---
-
 <Layout title={`${product.modelo} - Sanplast`}>
   <ViewTransitions />
   <main class="container mx-auto px-4 py-8">
@@ -52,7 +61,7 @@ const images = [
         <div class="aspect-square relative bg-gray-50 p-2">
           <img
             id="main-image"
-            src={`${baseImageUrl}${images[0]}`}
+            src={`${product.image1}`}
             alt={product.modelo}
             class="absolute inset-0 w-full h-full object-contain transition-opacity duration-300"
             loading="eager"
@@ -69,11 +78,11 @@ const images = [
                   class={`thumbnail rounded-md overflow-hidden transition-all duration-200 hover:opacity-90 ${
                     index === 0 ? 'ring-2 ring-primary ring-offset-2' : 'ring-1 ring-gray-200'
                   }`}
-                  data-image={`${baseImageUrl}${image}`}
+                  data-image={`${image}`}
                 >
                   <div class="w-8 h-8 md:w-10 md:h-10 bg-white">
                     <img
-                      src={`${baseImageUrl}${image}`}
+                      src={`${image}`}
                       alt={`${product.modelo} - vista ${index + 1}`}
                       class="w-full h-full object-contain p-1"
                       loading="lazy"

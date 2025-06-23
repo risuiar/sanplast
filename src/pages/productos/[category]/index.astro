@@ -27,7 +27,7 @@ const products = await getProducts(category);
 
 
 
-const baseImageUrl = "https://backend-sanplast.mateando.com/images/productos/";
+const baseImageUrl = "https://cms.mateando.com/images/productos/";
 ---
 
 <Layout title={`${title} - ${category} - Sanplast`}>
@@ -43,10 +43,10 @@ const baseImageUrl = "https://backend-sanplast.mateando.com/images/productos/";
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         {products.map((product) => (
           <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-            <a href={`/productos/${categoryTypes[category as keyof typeof categoryTypes]}/${product.id}/`} class="block">
+            <a href={`/productos/${(Object.keys(categoryTypes) as Array<keyof typeof categoryTypes>).find(key => categoryTypes[key] === product.tipo)}/${product.documentId}/`} class="block">
               <div class="relative">
                 <img
-                  src={`https://backend-sanplast.mateando.com/images/productos/${product.image1}`}
+                  src={product.image1}
                   alt={product.modelo}
                   class="w-full h-full object-contain p-2"
                 />
