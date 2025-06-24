@@ -114,16 +114,16 @@ export async function getRoutes(): Promise<Product[]> {
 
 export async function getProducts(category?: string): Promise<Product[]> {
   try {
-    let url = `${API_URL}/prods?sort[0]=nombre:asc&fields[0]=nombre&fields[1]=modelo&fields[2]=tipo&fields[3]=documentId&populate[0]=image1&pagination[pageSize]=100&status=published`;
+    let url = `${API_URL}/prods?sort[0]=nombre:asc&fields[0]=nombre&fields[1]=modelo&fields[2]=documentId&populate[0]=image1&pagination[pageSize]=100&status=published`;
 
     if (category) {
       const categoryType =
         categoryTypes[category as keyof typeof categoryTypes];
       if (categoryType) {
-        url += `&filters[tipo][$eq]=${categoryType}`;
+        url += `&filters[san_plast_tipo][tipo][$eq]=${categoryType}`;
       }
     }
-
+    console.log("******************", url);
     const response = await fetch(url, {
       headers: {
         Authorization: `Bearer ${BEARER_TOKEN}`,
@@ -136,6 +136,7 @@ export async function getProducts(category?: string): Promise<Product[]> {
 
     const result = await response.json();
     const products = result.data || [];
+    console.log(products);
     return products.map(transformStrapiProduct);
   } catch (error) {
     console.error("Error fetching products:", error);
