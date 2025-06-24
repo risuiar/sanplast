@@ -1,7 +1,7 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
 import { ViewTransitions } from 'astro:transitions';
-import { getRoutes, getProduct } from '../../../utils/api';
+import { getRoutes, getProduct, getProducts } from '../../../utils/api';
 import { categoryTypes } from '../CategoryTypes.astro';
 
 // Define types for URL parameters
@@ -13,20 +13,19 @@ const { category, id } = Astro.params as ProductParams;
 export const prerender = true;
 
 export async function getStaticPaths() {
-  const routes = await getRoutes();
+  // Obtener productos de cada categoría usando los filtros de API
+  const tanques = await getProducts('tanques');
+  const canos = await getProducts('canos');
+  const accesorios = await getProducts('accesorios');
 
-  return routes
-    .map((route) => {
-      const categorySlug = (Object.keys(categoryTypes) as Array<keyof typeof categoryTypes>).find(
-        key => categoryTypes[key].toLowerCase().trim() === String(route.tipo).toLowerCase().trim()
-      );
-      if (!categorySlug) {
-        console.warn('No categorySlug found for tipo:', route.tipo, 'in product:', route);
-        return null; // skip this route
-      }
-      return { params: { category: categorySlug, id: route.documentId } };
-    })
-    .filter(Boolean); // remove nulls
+  // Crear rutas para cada categoría
+  const routes = [
+    ...tanques.map(product => ({ params: { category: 'tanques', id: product.documentId } })),
+    ...canos.map(product => ({ params: { category: 'canos', id: product.documentId } })),
+    ...accesorios.map(product => ({ params: { category: 'accesorios', id: product.documentId } }))
+  ];
+
+  return routes;
 }
 const product = await getProduct(id.toString());
 

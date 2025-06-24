@@ -6,6 +6,7 @@ const BEARER_TOKEN = import.meta.env.PUBLIC_API_BEARER_TOKEN;
 export interface Product {
   id: string;
   documentId: string;
+  nombre: string;
   modelo: string;
   image1: string;
   image2?: string;
@@ -66,6 +67,7 @@ function transformStrapiProduct(
   return {
     id: strapiProduct.documentId || strapiProduct.id.toString(),
     documentId: strapiProduct.documentId || strapiProduct.id.toString(),
+    nombre: strapiProduct.nombre || "",
     modelo: strapiProduct.modelo || strapiProduct.nombre || "",
     image1: getImageUrl(strapiProduct.image1),
     image2: getImageUrl(strapiProduct.image2),
@@ -87,10 +89,44 @@ function transformStrapiProduct(
   };
 }
 
+// Helper to infer category from product name/modelo
+function inferCategoryFromName(productName: string): string {
+  const name = productName.toLowerCase();
+  if (
+    name.includes("tanque") ||
+    name.includes("azulito") ||
+    name.includes("negro") ||
+    name.startsWith("a") ||
+    name.startsWith("n")
+  ) {
+    return "tanques";
+  }
+  if (name.includes("caño") || name.includes("cano") || name.includes("33")) {
+    return "canos";
+  }
+  if (
+    name.includes("manguera") ||
+    name.includes("torneque") ||
+    name.includes("ajustador") ||
+    name.includes("accesorio") ||
+    name.includes("22e") ||
+    name.includes("d33")
+  ) {
+    return "accesorios";
+  }
+  if (name === "azulito" || name === "negro") {
+    return "tanques";
+  }
+  if (name === "caño 33" || name === "33") {
+    return "canos";
+  }
+  return "accesorios";
+}
+
 export async function getRoutes(): Promise<Product[]> {
   try {
-    // Get all products for routes generation
-    const url = `${API_URL}/prods?sort[0]=nombre:asc&fields[0]=nombre&fields[1]=modelo&fields[2]=tipo&fields[3]=documentId&populate[0]=image1&pagination[pageSize]=100&status=published`;
+    // Get all products for routes generation - removed 'tipo' field as it doesn't exist
+    const url = `${API_URL}/prods?populate=image1&pagination[pageSize]=100&status=published`;
 
     const response = await fetch(url, {
       headers: {
@@ -114,8 +150,9 @@ export async function getRoutes(): Promise<Product[]> {
 
 export async function getProducts(category?: string): Promise<Product[]> {
   try {
-    let url = `${API_URL}/prods?sort[0]=nombre:asc&fields[0]=nombre&fields[1]=modelo&fields[2]=documentId&populate[0]=image1&pagination[pageSize]=100&status=published`;
+    let url = `${API_URL}/prods?populate=image1&pagination[pageSize]=100&status=published`;
 
+    // Usar filtros dinámicos de API para todas las categorías
     if (category) {
       const categoryType =
         categoryTypes[category as keyof typeof categoryTypes];
@@ -123,7 +160,8 @@ export async function getProducts(category?: string): Promise<Product[]> {
         url += `&filters[san_plast_tipo][tipo][$eq]=${categoryType}`;
       }
     }
-    console.log("******************", url);
+
+    console.log(url);
     const response = await fetch(url, {
       headers: {
         Authorization: `Bearer ${BEARER_TOKEN}`,
@@ -135,9 +173,24 @@ export async function getProducts(category?: string): Promise<Product[]> {
     }
 
     const result = await response.json();
-    const products = result.data || [];
-    console.log(products);
-    return products.map(transformStrapiProduct);
+    const products = (result.data || []).map(transformStrapiProduct);
+
+    // Si no hay categoría, devolver todos
+    if (!category) return products;
+
+    // Si el filtro de API no devolvió resultados, usar inferencia local como fallback
+    if (products.length === 0) {
+      console.warn(
+        `No products found for category ${category} using API filter, trying local inference...`
+      );
+      const allProducts = await getProducts(); // Get all products without filter
+      return allProducts.filter(
+        (p: Product) =>
+          inferCategoryFromName(p.modelo || p.nombre || "") === category
+      );
+    }
+
+    return products;
   } catch (error) {
     console.error("Error fetching products:", error);
     return [];
