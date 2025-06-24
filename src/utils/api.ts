@@ -123,15 +123,11 @@ function inferCategoryFromName(productName: string): string {
   return "accesorios";
 }
 
-export async function getRoutes(): Promise<Product[]> {
+export async function getRoutes(): Promise<{ category: string; id: string }[]> {
   try {
-    // Get all products for routes generation - removed 'tipo' field as it doesn't exist
-    const url = `${API_URL}/prods?populate=image1&pagination[pageSize]=100&status=published`;
-
+    const url = `${API_URL}/prods?&status=published`;
     const response = await fetch(url, {
-      headers: {
-        Authorization: `Bearer ${BEARER_TOKEN}`,
-      },
+      headers: { Authorization: `Bearer ${BEARER_TOKEN}` },
     });
 
     if (!response.ok) {
@@ -141,7 +137,58 @@ export async function getRoutes(): Promise<Product[]> {
 
     const result = await response.json();
     const products = result.data || [];
-    return products.map(transformStrapiProduct);
+
+    // Helper para inferir categoría si falta
+    const inferCategoryFromName = (productName: string): string => {
+      const name = (productName || "").toLowerCase();
+      if (
+        name.includes("tanque") ||
+        name.includes("azulito") ||
+        name.includes("negro") ||
+        name.startsWith("a") ||
+        name.startsWith("n")
+      )
+        return "tanques";
+      if (name.includes("caño") || name.includes("cano") || name.includes("33"))
+        return "canos";
+      if (
+        name.includes("manguera") ||
+        name.includes("torneque") ||
+        name.includes("ajustador") ||
+        name.includes("accesorio") ||
+        name.includes("22e") ||
+        name.includes("d33")
+      )
+        return "accesorios";
+      if (name === "azulito" || name === "negro") return "tanques";
+      if (name === "caño 33" || name === "33") return "canos";
+      return "accesorios";
+    };
+
+    return products.map((product: any) => {
+      let category =
+        product?.attributes?.tipo?.toLowerCase?.() ||
+        product?.tipo?.toLowerCase?.();
+      if (category === "tanque") category = "tanques";
+      if (category === "cano") category = "canos";
+      if (category === "accesorio") category = "accesorios";
+      if (!["tanques", "canos", "accesorios"].includes(category)) {
+        category = inferCategoryFromName(
+          product?.attributes?.modelo ||
+            product?.attributes?.nombre ||
+            product?.modelo ||
+            product?.nombre ||
+            ""
+        );
+      }
+      return {
+        category,
+        id:
+          product?.attributes?.documentId ||
+          product?.documentId ||
+          product?.id?.toString(),
+      };
+    });
   } catch (error) {
     console.error("Error fetching products:", error);
     return [];
@@ -161,7 +208,6 @@ export async function getProducts(category?: string): Promise<Product[]> {
       }
     }
 
-    console.log(url);
     const response = await fetch(url, {
       headers: {
         Authorization: `Bearer ${BEARER_TOKEN}`,

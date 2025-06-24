@@ -55,7 +55,7 @@ const images = [
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8" transition:name={`product-${product.id}`}>
       <!-- Card de imagen -->
-      <div class="bg-white rounded-lg shadow-md overflow-hidden">
+      <div class="bg-white rounded-lg shadow-md overflow-hidden relative">
         <!-- Imagen principal con mejor aspecto -->
         <div class="aspect-square relative bg-gray-50 p-2">
           <img
@@ -66,20 +66,33 @@ const images = [
             loading="eager"
             transition:name={`product-image-${product.id}`}
           />
+
+          <!-- Botón de zoom en la imagen principal -->
+          <div class="absolute top-4 right-4 z-10">
+            <button
+              id="zoom-button"
+              class="bg-white/90 hover:bg-white text-gray-700 hover:text-primary p-2 rounded-full shadow-lg transition-all duration-200 backdrop-blur-sm"
+              title="Ver imagen en tamaño completo"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/>
+              </svg>
+            </button>
+          </div>
         </div>
 
         <!-- Galería de miniaturas con espaciado responsivo -->
         {images.length > 1 && (
           <div class="p-4 md:p-6 bg-gray-50 border-t border-gray-100">
-            <div class="flex flex-wrap justify-center gap-2 md:gap-3">
+            <div class="flex flex-wrap justify-center gap-3 md:gap-4">
               {images.map((image, index) => (
                 <button
-                  class={`thumbnail rounded-md overflow-hidden transition-all duration-200 hover:opacity-90 ${
+                  class={`thumbnail rounded-lg overflow-hidden transition-all duration-200 hover:opacity-90 ${
                     index === 0 ? 'ring-2 ring-primary ring-offset-2' : 'ring-1 ring-gray-200'
                   }`}
                   data-image={`${image}`}
                 >
-                  <div class="w-8 h-8 md:w-10 md:h-10 bg-white">
+                  <div class="w-12 h-12 md:w-16 md:h-16 bg-white">
                     <img
                       src={`${image}`}
                       alt={`${product.modelo} - vista ${index + 1}`}
@@ -151,27 +164,95 @@ const images = [
       </div>
     </div>
   </main>
+
+  <!-- Modal de zoom -->
+  <div id="zoom-modal" class="fixed inset-0 bg-black/90 z-50 hidden items-center justify-center p-4">
+    <div class="relative max-w-4xl max-h-full">
+      <button
+        id="close-zoom"
+        class="absolute -top-12 right-0 text-white hover:text-gray-300 p-2 transition-colors"
+      >
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+      <img
+        id="zoom-image"
+        src=""
+        alt=""
+        class="max-w-full max-h-[80vh] object-contain rounded-lg"
+      />
+    </div>
+  </div>
 </Layout>
 
 <script>
 function initializeGallery() {
   const mainImage = document.getElementById('main-image') as HTMLImageElement;
   const thumbnails = document.querySelectorAll('.thumbnail');
+  const zoomButton = document.getElementById('zoom-button') as HTMLButtonElement;
+  const zoomModal = document.getElementById('zoom-modal') as HTMLDivElement;
+  const zoomImage = document.getElementById('zoom-image') as HTMLImageElement;
+  const closeZoom = document.getElementById('close-zoom') as HTMLButtonElement;
 
+  // Función para cambiar imagen principal
+  function changeMainImage(newImageSrc: string) {
+    if (mainImage) {
+      mainImage.style.opacity = '0';
+      setTimeout(() => {
+        mainImage.src = newImageSrc;
+        mainImage.style.opacity = '1';
+      }, 200);
+    }
+  }
+
+  // Función para abrir zoom
+  function openZoom() {
+    if (mainImage && zoomImage) {
+      let largeImageUrl = mainImage.src;
+      let fallbackUrl = mainImage.src;
+
+      // Si es una imagen de Strapi, intentar obtener la versión large
+      if (largeImageUrl.includes('/uploads/')) {
+        if (largeImageUrl.includes('thumbnail_')) {
+          largeImageUrl = largeImageUrl.replace('thumbnail_', 'large_');
+        } else if (largeImageUrl.includes('small_')) {
+          largeImageUrl = largeImageUrl.replace('small_', 'large_');
+        } else if (largeImageUrl.includes('medium_')) {
+          largeImageUrl = largeImageUrl.replace('medium_', 'large_');
+        } else {
+          const urlParts = largeImageUrl.split('/uploads/');
+          if (urlParts.length > 1) {
+            largeImageUrl = urlParts[0] + '/uploads/large_' + urlParts[1];
+          }
+        }
+      }
+
+      zoomImage.onerror = function () {
+        zoomImage.onerror = null;
+        zoomImage.src = fallbackUrl;
+      };
+      zoomImage.src = largeImageUrl;
+      zoomImage.alt = mainImage.alt;
+      zoomModal.classList.remove('hidden');
+      zoomModal.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  // Función para cerrar zoom
+  function closeZoomModal() {
+    zoomModal.classList.add('hidden');
+    zoomModal.classList.remove('flex');
+    document.body.style.overflow = '';
+  }
+
+  // Event listeners para thumbnails
   thumbnails.forEach((thumb) => {
     thumb.addEventListener('click', () => {
-      // Añadir efecto de fade al cambiar la imagen
-      if (mainImage) {
-        mainImage.style.opacity = '0';
-
-        setTimeout(() => {
-          // Update main image
-          const newImageSrc = thumb.getAttribute('data-image');
-          if (newImageSrc && mainImage) {
-            mainImage.src = newImageSrc;
-            mainImage.style.opacity = '1';
-          }
-        }, 200);
+      const newImageSrc = thumb.getAttribute('data-image');
+      if (newImageSrc) {
+        changeMainImage(newImageSrc);
       }
 
       // Update active thumbnail
@@ -182,6 +263,29 @@ function initializeGallery() {
       thumb.classList.remove('ring-1', 'ring-gray-200');
       thumb.classList.add('ring-2', 'ring-primary', 'ring-offset-2');
     });
+  });
+
+  // Event listeners para zoom
+  if (zoomButton) {
+    zoomButton.addEventListener('click', openZoom);
+  }
+
+  if (closeZoom) {
+    closeZoom.addEventListener('click', closeZoomModal);
+  }
+
+  // Cerrar modal con Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !zoomModal.classList.contains('hidden')) {
+      closeZoomModal();
+    }
+  });
+
+  // Cerrar modal haciendo clic fuera de la imagen
+  zoomModal.addEventListener('click', (e) => {
+    if (e.target === zoomModal) {
+      closeZoomModal();
+    }
   });
 }
 
