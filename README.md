@@ -1,49 +1,55 @@
-# Astro Starter Kit: Basics
+# Sanplast
 
-```sh
-npm create astro@latest -- --template basics
-```
+**Sanplast** is a lightweight and modern web application for managing and displaying plastic product data. It uses [Astro](https://astro.build/) as a fast, content-driven frontend framework and connects to a headless CMS for data retrieval.
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/basics)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/basics)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/basics/devcontainer.json)
+---
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## 🚀 Features
 
-![just-the-basics](https://github.com/withastro/astro/assets/2244813/a0a5533c-a856-4198-8470-2d67b1d7c554)
+- **Static-first frontend** built with Astro
+- **Read-only API** consumption from Strapi
+- Clean UI for displaying structured product data
+- Fully decoupled and scalable architecture
 
-## 🚀 Project Structure
+---
 
-Inside of your Astro project, you'll see the following folders and files:
+## 🧭 Architecture
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src/
-│   ├── layouts/
-│   │   └── Layout.astro
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+| Layer     | Technology      | Description                     |
+|-----------|------------------|---------------------------------|
+| Frontend  | **Astro**        | Static site generator (SSG/SSR) |
+| Backend   | **Strapi**       | Headless CMS & REST API         |
+| Database  | **PostgreSQL**   | Data storage via Strapi         |
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+> ℹ️ **Originally**, the backend was implemented using Laravel. Later, the project transitioned to **Strapi** to accelerate development and simplify content management through a visual admin interface.
 
-## 🧞 Commands
+> 🔒 **Note:** The frontend is fully **read-only**, consuming published content via API.
 
-All commands are run from the root of the project, from a terminal:
+---
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+## 🧩 Content Structure
 
-## 👀 Want to learn more?
+- **Products** (nombre, modelo, tipo, descripción)
+- **Types** (e.g. tanque, caño, accesorio)
+- **Images** and relations
+- Only **published** entries are shown in the frontend
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
-# sanplast
+---
+
+## 📈 Future Improvements
+
+- Optional GraphQL integration
+- Static site generation for public catalog
+- Frontend search and filtering
+
+
+---
+
+## 🙋 Contact
+
+**Author**: Ricardo Voegeli  
+GitHub: [@risuiar](https://github.com/risuiar)
+
+---
+
+**Sanplast** — lightweight, structured, and open.
