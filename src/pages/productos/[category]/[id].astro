@@ -24,7 +24,6 @@ export async function getStaticPaths() {
     ...canos.map(product => ({ params: { category: 'canos', id: product.documentId } })),
     ...accesorios.map(product => ({ params: { category: 'accesorios', id: product.documentId } }))
   ];
-
   return routes;
 }
 const product = await getProduct(id.toString());

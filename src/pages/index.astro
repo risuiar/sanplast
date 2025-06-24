@@ -1,9 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { getProducts } from '../utils/api';
-
-const products = await getProducts(undefined, true);
-const featuredProducts = products.slice(0, 3); // Tomamos los pri
+import { productTypes } from '../utils/types';
+const featuredProducts = await getProducts(undefined, true);
 ---
 
 <Layout title="Inicio - Sanplast">
@@ -43,21 +42,9 @@ const featuredProducts = products.slice(0, 3); // Tomamos los pri
 				<h2 class="text-3xl font-bold text-center mb-12">Productos Destacados</h2>
 				<div class="grid md:grid-cols-3 gap-8">
 					{featuredProducts.map((product) => {
-						// Normaliza la categoría
-						let category = product.tipo?.toLowerCase();
-						if (category === 'tanque') category = 'tanques';
-						if (category === 'cano') category = 'canos';
-						if (category === 'accesorio') category = 'accesorios';
-						if (!['tanques', 'canos', 'accesorios'].includes(category)) {
-							// Fallback: inferir por nombre/modelo
-							const name = (product.modelo || product.nombre || '').toLowerCase();
-							if (name.includes('tanque') || name.includes('azulito') || name.includes('negro')) category = 'tanques';
-							else if (name.includes('caño') || name.includes('cano') || name.includes('33')) category = 'canos';
-							else category = 'accesorios';
-						}
 						return (
 							<div class="bg-white rounded-lg shadow-lg overflow-hidden">
-								<a href={`/productos/${category}/${product.documentId}/`} class="block">
+								<a href={`/productos/${productTypes[product.san_plast_tipo.tipo as keyof typeof productTypes]}/${product.documentId}/`} class="block">
 									<div class="aspect-square relative">
 										<img
 											src={product.image1}

@@ -1,27 +1,9 @@
 import { categoryTypes } from "../pages/productos/CategoryTypes.astro";
+import type { Product } from "./types";
+import { productTypes } from "./types";
 
 const API_URL = "https://cms.mateando.com/api";
 const BEARER_TOKEN = import.meta.env.PUBLIC_API_BEARER_TOKEN;
-
-export interface Product {
-  id: string;
-  documentId: string;
-  nombre: string;
-  modelo: string;
-  image1: string;
-  image2?: string;
-  image3?: string;
-  image4?: string;
-  image5?: string;
-  descripcion?: string;
-  tipo: string;
-  capacidad_litros?: number;
-  precio_venta?: number;
-  material?: string;
-  altura_cm?: number;
-  diametro_cm?: number;
-  uso_recomendado?: string;
-}
 
 // Helper function to transform Strapi response to our Product interface
 function transformStrapiProduct(
@@ -86,41 +68,8 @@ function transformStrapiProduct(
     altura_cm: strapiProduct.altura_cm,
     diametro_cm: strapiProduct.diametro_cm,
     uso_recomendado: strapiProduct.uso_recomendado,
+    san_plast_tipo: strapiProduct.san_plast_tipo,
   };
-}
-
-// Helper to infer category from product name/modelo
-function inferCategoryFromName(productName: string): string {
-  const name = productName.toLowerCase();
-  if (
-    name.includes("tanque") ||
-    name.includes("azulito") ||
-    name.includes("negro") ||
-    name.startsWith("a") ||
-    name.startsWith("n")
-  ) {
-    return "tanques";
-  }
-  if (name.includes("caño") || name.includes("cano") || name.includes("33")) {
-    return "canos";
-  }
-  if (
-    name.includes("manguera") ||
-    name.includes("torneque") ||
-    name.includes("ajustador") ||
-    name.includes("accesorio") ||
-    name.includes("22e") ||
-    name.includes("d33")
-  ) {
-    return "accesorios";
-  }
-  if (name === "azulito" || name === "negro") {
-    return "tanques";
-  }
-  if (name === "caño 33" || name === "33") {
-    return "canos";
-  }
-  return "accesorios";
 }
 
 export async function getRoutes(): Promise<{ category: string; id: string }[]> {
@@ -138,49 +87,12 @@ export async function getRoutes(): Promise<{ category: string; id: string }[]> {
     const result = await response.json();
     const products = result.data || [];
 
-    // Helper para inferir categoría si falta
-    const inferCategoryFromName = (productName: string): string => {
-      const name = (productName || "").toLowerCase();
-      if (
-        name.includes("tanque") ||
-        name.includes("azulito") ||
-        name.includes("negro") ||
-        name.startsWith("a") ||
-        name.startsWith("n")
-      )
-        return "tanques";
-      if (name.includes("caño") || name.includes("cano") || name.includes("33"))
-        return "canos";
-      if (
-        name.includes("manguera") ||
-        name.includes("torneque") ||
-        name.includes("ajustador") ||
-        name.includes("accesorio") ||
-        name.includes("22e") ||
-        name.includes("d33")
-      )
-        return "accesorios";
-      if (name === "azulito" || name === "negro") return "tanques";
-      if (name === "caño 33" || name === "33") return "canos";
-      return "accesorios";
-    };
-
     return products.map((product: any) => {
       let category =
-        product?.attributes?.tipo?.toLowerCase?.() ||
-        product?.tipo?.toLowerCase?.();
-      if (category === "tanque") category = "tanques";
-      if (category === "cano") category = "canos";
-      if (category === "accesorio") category = "accesorios";
-      if (!["tanques", "canos", "accesorios"].includes(category)) {
-        category = inferCategoryFromName(
-          product?.attributes?.modelo ||
-            product?.attributes?.nombre ||
-            product?.modelo ||
-            product?.nombre ||
-            ""
-        );
-      }
+        productTypes[
+          (product?.attributes?.tipo?.toLowerCase?.() ||
+            product?.tipo?.toLowerCase?.()) as keyof typeof productTypes
+        ];
       return {
         category,
         id:
@@ -200,12 +112,10 @@ export async function getProducts(
   destacado: boolean = false
 ): Promise<Product[]> {
   try {
-    let url = `${API_URL}/prods?populate=image1&pagination[pageSize]=100&status=published`;
-
+    let url = `${API_URL}/prods?populate[0]=image1&pagination[pageSize]=100&status=published`;
     if (destacado) {
-      url += `&filters[destacado][$eq]=true`;
+      url += `&filters[destacado][$eq]=true&populate[1]=san_plast_tipo`;
     }
-
     // Usar filtros dinámicos de API para todas las categorías
     if (category) {
       const categoryType =
@@ -236,11 +146,7 @@ export async function getProducts(
       console.warn(
         `No products found for category ${category} using API filter, trying local inference...`
       );
-      const allProducts = await getProducts(); // Get all products without filter
-      return allProducts.filter(
-        (p: Product) =>
-          inferCategoryFromName(p.modelo || p.nombre || "") === category
-      );
+      return await getProducts(); // Get all products without filter
     }
 
     return products;
