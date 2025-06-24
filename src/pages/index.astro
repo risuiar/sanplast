@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import { getProducts } from '../utils/api';
 
-const products = await getProducts();
+const products = await getProducts(undefined, true);
 const featuredProducts = products.slice(0, 3); // Tomamos los pri
 ---
 
@@ -42,25 +42,39 @@ const featuredProducts = products.slice(0, 3); // Tomamos los pri
 			<div class="container mx-auto px-4">
 				<h2 class="text-3xl font-bold text-center mb-12">Productos Destacados</h2>
 				<div class="grid md:grid-cols-3 gap-8">
-					{featuredProducts.map((product) => (
-						<div class="bg-white rounded-lg shadow-lg overflow-hidden">
-							<a href={`/productos/${product.tipo}/${product.id}/`} class="block">
-								<div class="aspect-square relative">
-									<img
-										src={`https://cms.mateando.com/images/productos/${product.image1}`}
-										alt={product.modelo}
-										class="w-full h-full object-contain p-2"
-									/>
-								</div>
-								<div class="p-3">
-									<h3 class="text-base font-semibold mb-1">{product.modelo}</h3>
-									{product.capacidad_litros && (
-										<p class="text-gray-600 text-xs">{product.capacidad_litros} litros</p>
-									)}
-								</div>
-							</a>
+					{featuredProducts.map((product) => {
+						// Normaliza la categoría
+						let category = product.tipo?.toLowerCase();
+						if (category === 'tanque') category = 'tanques';
+						if (category === 'cano') category = 'canos';
+						if (category === 'accesorio') category = 'accesorios';
+						if (!['tanques', 'canos', 'accesorios'].includes(category)) {
+							// Fallback: inferir por nombre/modelo
+							const name = (product.modelo || product.nombre || '').toLowerCase();
+							if (name.includes('tanque') || name.includes('azulito') || name.includes('negro')) category = 'tanques';
+							else if (name.includes('caño') || name.includes('cano') || name.includes('33')) category = 'canos';
+							else category = 'accesorios';
+						}
+						return (
+							<div class="bg-white rounded-lg shadow-lg overflow-hidden">
+								<a href={`/productos/${category}/${product.documentId}/`} class="block">
+									<div class="aspect-square relative">
+										<img
+											src={product.image1}
+											alt={product.modelo}
+											class="w-full h-full object-contain p-2"
+										/>
+									</div>
+									<div class="p-3">
+										<h3 class="text-base font-semibold mb-1">{product.modelo}</h3>
+										{product.capacidad_litros && (
+											<p class="text-gray-600 text-xs">{product.capacidad_litros} litros</p>
+										)}
+									</div>
+								</a>
 							</div>
-					))}
+						);
+					})}
 				</div>
 				<div class="text-center mt-8">
 					<a

@@ -195,9 +195,16 @@ export async function getRoutes(): Promise<{ category: string; id: string }[]> {
   }
 }
 
-export async function getProducts(category?: string): Promise<Product[]> {
+export async function getProducts(
+  category?: string,
+  destacado: boolean = false
+): Promise<Product[]> {
   try {
     let url = `${API_URL}/prods?populate=image1&pagination[pageSize]=100&status=published`;
+
+    if (destacado) {
+      url += `&filters[destacado][$eq]=true`;
+    }
 
     // Usar filtros dinámicos de API para todas las categorías
     if (category) {

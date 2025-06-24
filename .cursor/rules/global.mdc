@@ -1,0 +1,12 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+---
+description: Siempre aplicar esta regla para ayudar con comentarios y estructura de código
+globs:
+alwaysApply: true
+---
+
+Siempre usá comentarios claros y organizados en el código. Seguí buenas prácticas de frontend y mantené consistencia en el estilo.
